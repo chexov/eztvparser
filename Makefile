@@ -1,4 +1,4 @@
-install:
+build:
 	easy_install lxml
 
 test:
