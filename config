@@ -1,0 +1,19 @@
+[The+Mentalist]
+episode = 14
+season = 3
+show_type = seasonepisode
+eztvit_name = Mentalist, The
+human_name = The Mentalist
+
+[Dexter]
+show_type = seasonepisode
+episode = 12
+season = 5
+human_name = Dexter
+
+[Californication]
+show_type = seasonepisode
+episode = 6
+human_name = Californication
+season = 4
+
