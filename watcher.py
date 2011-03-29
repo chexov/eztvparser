@@ -40,7 +40,18 @@ if __name__ == "__main__":
             else:
                 eztvit_id = eztvit.showid_by_name(show['human_name'])
 
-            for eztv_espisode in eztvit.torrents(eztvit_id):
+            all_torrents = eztvit.torrents(eztvit_id)
+            while True:
+                try:
+                    eztv_espisode = all_torrents.next()
+                except IOError:
+                    print "Error loading torrents for", show['human_name']
+                    print "Got error. Sleeping..."
+                    time.sleep(10)
+                except StopIteration:
+                    break
+
+                #print eztv_espisode['filename']
                 show_name, season, episode = eztvit.episodeinfo_from_filename(eztv_espisode['filename'])
                 if int(season)  >= int(show.get('season')) and \
                    int(episode) >  int(show.get('episode')):
@@ -52,7 +63,8 @@ if __name__ == "__main__":
                            config.set(section, "season", season)
                            config.set(section, "episode", episode)
                            break
-        print "Sleeping..."
-        time.sleep(2)
-        config.write(open(config_fn, 'w'))
+        else:
+            print "Unknwn show type", show.get('show_type')
+
+    config.write(open(config_fn, 'w'))
 

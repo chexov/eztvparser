@@ -21,7 +21,7 @@ def episodeinfo_from_filename(filename):
         if match:
             result = match.groups()
             return result[0].strip(), int(result[1]), int(result[2])
-    return None
+    raise ValueError(u"Could not get episode and season info from '%s'" % filename)
 
 
 def showid_by_name(name=None):
@@ -56,8 +56,11 @@ def torrents(showid):
     """
     Gets eztv.it showid
     Returns list with filename and torrent info
+
+    Throws IOError in case you have problem loading the page
     """
     tree = lxml.html.parse('http://eztv.it/shows/%s/' % showid)
+
     for _tr in tree.xpath('//table[@class="forum_header_noborder"]/tr[@class="forum_header_border"]'):
         yield {'filename': _tr.xpath('td[2]/a/text()')[0],
                'torrents': _tr.xpath('td[3]/a/@href')}
