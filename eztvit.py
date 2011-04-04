@@ -66,3 +66,10 @@ def torrents(showid):
                'torrents': _tr.xpath('td[3]/a/@href')}
 
 
+if __name__ == "__main__":
+    import pprint
+    name = sys.argv[1]
+    showid = showid_by_name(name)
+    for v in torrents(showid):
+        pprint.pprint(v)
+
