@@ -71,5 +71,6 @@ if __name__ == "__main__":
     name = sys.argv[1]
     showid = showid_by_name(name)
     for v in torrents(showid):
-        pprint.pprint(v)
+        for __t in v['torrents']:
+            print "wget '%s' -O '%s.torrent'" % (__t, v['filename'])
 

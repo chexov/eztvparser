@@ -16,24 +16,20 @@ def proceed_with_show(show):
     else:
         eztvit_id = eztvit.showid_by_name(show['human_name'])
 
-    all_torrents = eztvit.torrents(eztvit_id)
-    while True:
-        try:
-            eztv_espisode = all_torrents.next()
-        except IOError:
-            print "Error loading torrents for", show['human_name']
-            print "Got error. Sleeping..."
-            time.sleep(10)
-            try:
-                eztv_espisode = all_torrents.next()
-            except StopIteration:
-                break
-        except StopIteration:
-            break
+    try:
+        all_torrents = list(eztvit.torrents(eztvit_id))
+    except IOError:
+        print "Error loading torrents for id %s" % eztvit_id
+        return None
 
+
+    result = [0,0]
+    print "All torrents len()", len(all_torrents)
+    for eztv_espisode in all_torrents:
         show_name, season, episode = eztvit.episodeinfo_from_filename(eztv_espisode['filename'])
-        #print u"Got %s S%s E%s => S%s E%s" % (show_name, season, episode, int(show.get('season')), int(show.get('episode')) )
-        if int(season) > int(show.get('season')):
+        #print u"%s S%s E%s =>? S%s E%s" % (show_name, season, episode, int(show.get('season')), int(show.get('episode')) )
+        #print show['episode']
+        if int(season) > int(show['season']):
             # in case season is changed, reset episode count
             show['episode'] = 0
 
@@ -46,7 +42,6 @@ def proceed_with_show(show):
                        data = urllib2.urlopen(t_url)
                    except urllib2.URLError:
                        print "Error loading '%s'" % t_url
-                       print sys.exc_info()
                        continue
 
                    open(out_fn, 'wb').write(data.read())
@@ -58,9 +53,15 @@ def proceed_with_show(show):
                            stdout=subprocess.PIPE).communicate()[0].strip()
                    if mimetype == 'BitTorrent file':
                        print "OK. Torrent mime type:", mimetype
-                       return (season, episode)
+                       if result[0] < season:
+                           result[0] = season
+                       if result[1] < episode:
+                           result[1] = episode
+                       break
                    else:
                        print "Error. Torrent mime type:", mimetype
+    if result != [0,0]:
+        return result
 
 
 if __name__ == "__main__":
@@ -104,9 +105,9 @@ if __name__ == "__main__":
         if show.get('show_type') == 'seasonepisode':
             got_new = proceed_with_show(show)
             if got_new:
-                print "OK", got_new
-                config.set(section, "season", got_new[0])
-                config.set(section, "episode", got_new[1])
+                print "Got new episode", got_new
+                config.set(section, "season", str(got_new[0]))
+                config.set(section, "episode", str(got_new[1]))
         else:
             print "Unknwn show type", show.get('show_type')
         print "-"*40
