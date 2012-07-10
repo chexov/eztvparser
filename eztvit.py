@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # encdoing: utf-8
+
 import sys
 import urllib2
 import re
@@ -66,11 +67,28 @@ def torrents(showid):
                'torrents': _tr.xpath('td[3]/a/@href')}
 
 
-if __name__ == "__main__":
+def main_based_on_name():
     import pprint
     name = sys.argv[1]
     showid = showid_by_name(name)
     for v in torrents(showid):
         for __t in v['torrents']:
             print "wget '%s' -O '%s.torrent'" % (__t, v['filename'])
+
+
+if __name__ == "__main__":
+    import pprint
+    url = sys.argv[1]  # http://eztv.it/shows/36/breaking-bad/
+    url_pat = re.compile(ur"shows\/(\d+)\/(.+)\/")
+    m = url_pat.search(url)
+    if m:
+        show_id, show_name = m.groups()
+    else:
+        print "Usage: %s http://eztv.it/shows/36/breaking-bad/" % sys.argv[0]
+        sys.exit(1)
+
+    for v in torrents(show_id):
+        for __t in v['torrents']:
+            if __t.find("magnet:") > -1:
+                print "%s;%s;%s" % (__t, v['filename'], episodeinfo_from_filename(v['filename']) )
 
