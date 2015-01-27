@@ -1,6 +1,8 @@
 import eztvit
 
-print list(eztvit.showid_by_name())
+list(eztvit.shows_map())
+
+print eztvit.showid_by_name("bobs burgers")
 
 print list(eztvit.torrents('405'))
 

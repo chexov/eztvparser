@@ -10,11 +10,11 @@ if __name__ == "__main__":
     import urllib2
 
     if len(sys.argv) != 4:
-        print "Usage: %s <outdir> http://eztv.it/shows/36/breaking-bad/ <filename filter: S02>" % sys.argv[0]
+        print "Usage: %s <outdir> http://eztv.ch/shows/36/breaking-bad/ <filename filter: S02>" % sys.argv[0]
         sys.exit(1)
 
     out_dir = sys.argv[1]
-    url = sys.argv[2]  # http://eztv.it/shows/36/breaking-bad/
+    url = sys.argv[2]  # http://eztv.ch/shows/36/breaking-bad/
     filter_pat = sys.argv[3]
 
     url_pat = re.compile(ur"shows\/(\d+)\/(.+)\/")
